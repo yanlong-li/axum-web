@@ -2,7 +2,7 @@ use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
 use axum::http::StatusCode;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json;
 use sqlx::mysql::MySqlPool;
 
@@ -42,22 +42,31 @@ pub async fn action_find_user(
     }
 }
 
+// 假设你有一个创建用户的函数
 pub async fn action_create_user(
-    // this argument tells axum to parse the request body
-    // as JSON into a `CreateUser` type
+    // 这个参数类型实现了FromRequestParts trait
     Json(payload): Json<CreateUser>,
+    Extension(pool): Extension<MySqlPool>,
 ) -> (StatusCode, Json<User>) {
-    // insert your application logic here
+    // 插入用户数据并返回id
     let user = crate::schema::user::create(payload.username);
 
-    // this will be converted into a JSON response
-    // with a status code of `201 Created`
+    // 这个返回类型实现了IntoResponse trait
     (StatusCode::CREATED, Json(user))
 }
 
 // the input to our `create_user` handler
-#[derive(Deserialize)]
+#[derive(Deserialize, Serialize, sqlx::FromRow)]
 pub struct CreateUser {
     username: String,
+}
+
+pub async fn action_list(
+    Extension(pool): Extension<MySqlPool>,
+) -> Json<Vec<User>> {
+    let users_result = sqlx::query_as::<_, User>("SELECT id,username FROM user")
+        .fetch_all(&pool)
+        .await.unwrap();
+    Json(users_result)
 }
 

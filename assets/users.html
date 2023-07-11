@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户列表</title>
+</head>
+<body>
+<div id="app">
+    <table>
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>username</th>
+        </tr>
+        </thead>
+        <tbody id="user_table_list">
+
+        </tbody>
+
+    </table>
+
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <h3>创建新用户</h3>
+    <input id="username" name="username" placeholder="请输入用户名">
+    <input type="submit" value="提交" onclick="function createUser() {
+        let username = document.getElementById('username').value;
+
+        fetch('/users',{
+            method: 'post',
+            headers: {
+                'content-type': 'application/json'
+            },
+            body:JSON.stringify({
+                username: username
+            })
+        }).then(res=>res.json()).then(res=>{
+            location.reload();
+        })
+    }
+    createUser()">
+</div>
+<script>
+
+
+    function getUserList() {
+
+        fetch('/users', {
+            method: 'get',
+        }).then(res => res.json()).then(res => {
+
+            res.forEach(item => {
+
+                let tableBody = document.getElementById('user_table_list')
+
+                let tr = document.createElement('tr')
+                tableBody.appendChild(tr)
+
+                let id = document.createElement('td')
+                id.innerText = item.id
+                let username = document.createElement('td')
+                username.innerText = item.username;
+
+                tr.appendChild(id)
+                tr.appendChild(username)
+            })
+
+        })
+
+    }
+
+    getUserList()
+
+</script>
+</body>
+</html>
