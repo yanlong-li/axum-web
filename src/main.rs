@@ -2,7 +2,6 @@ use std::net::SocketAddr;
 
 use axum::Router;
 use redis::Client;
-use sqlx::mysql::MySqlPool;
 use tower_http::add_extension::AddExtensionLayer;
 use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -12,6 +11,10 @@ mod schema;
 mod services;
 mod models;
 mod routes;
+
+mod database;
+
+mod utils;
 
 
 #[tokio::main]
@@ -26,9 +29,7 @@ async fn main() {
         .init();
 
     // 创建一个连接池
-    let pool = MySqlPool::connect("mysql://root:123456@localhost/axum")
-        .await
-        .unwrap();
+    let pool = database::get_db().await;
 
     // 创建一个 Redis 客户端
     let client = Client::open("redis://127.0.0.1/").unwrap();

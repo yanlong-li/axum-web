@@ -44,8 +44,12 @@ pub async fn action_find_user(
 
 pub async fn action_create_user(
     Json(payload): Json<CreateUser>,
-) -> Result<Json<User>, (StatusCode, String)> {
-    let user = crate::schema::user::create(payload.username).await?;
+) -> Result<Json<User>, String> {
+    if payload.username.trim().is_empty() {
+        return Err("用户名不能为空".to_string());
+    }
+
+    let user = crate::services::users::create(payload.username).await?;
 
     // Result::Err(StatusCode::CREATED,"sad".to_string())
     Ok(Json(user))
