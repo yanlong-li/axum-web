@@ -49,7 +49,7 @@ pub async fn action_create_user(
     Extension(pool): Extension<MySqlPool>,
 ) -> (StatusCode, Json<User>) {
     // 插入用户数据并返回id
-    let user = crate::schema::user::create(payload.username);
+    let user = crate::schema::user::create(payload.username).await;
 
     // 这个返回类型实现了IntoResponse trait
     (StatusCode::CREATED, Json(user))

@@ -8,7 +8,7 @@ pub struct User {
 }
 
 
-pub fn create(username: String) -> User {
+pub async fn create(username: String) -> User {
 
     User{
         id: 0,
