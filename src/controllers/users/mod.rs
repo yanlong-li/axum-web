@@ -42,17 +42,14 @@ pub async fn action_find_user(
     }
 }
 
-// 假设你有一个创建用户的函数
 pub async fn action_create_user(
-    // 这个参数类型实现了FromRequestParts trait
     Json(payload): Json<CreateUser>,
     Extension(pool): Extension<MySqlPool>,
-) -> (StatusCode, Json<User>) {
-    // 插入用户数据并返回id
-    let user = crate::schema::user::create(payload.username).await;
+) -> Result<Json<User>, (StatusCode, String)> {
+    let user = crate::schema::user::create(payload.username).await?;
 
-    // 这个返回类型实现了IntoResponse trait
-    (StatusCode::CREATED, Json(user))
+    // Result::Err(StatusCode::CREATED,"sad".to_string())
+    Ok(Json(user))
 }
 
 // the input to our `create_user` handler
