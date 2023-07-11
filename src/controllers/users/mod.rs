@@ -44,7 +44,6 @@ pub async fn action_find_user(
 
 pub async fn action_create_user(
     Json(payload): Json<CreateUser>,
-    Extension(pool): Extension<MySqlPool>,
 ) -> Result<Json<User>, (StatusCode, String)> {
     let user = crate::schema::user::create(payload.username).await?;
 
