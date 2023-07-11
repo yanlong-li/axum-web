@@ -2,22 +2,19 @@ use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
 use axum::http::StatusCode;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json;
 use sqlx::mysql::MySqlPool;
 
-// 定义一个结构体来表示查询参数
-#[derive(Deserialize)]
-pub struct UserPath {
-    pub username: String,
-}
+use crate::models::users::SearchUserByUsername;
+use crate::schema::user::User;
 
-pub async fn find_user(
-    Path(path): Path<UserPath>,
+pub async fn action_find_user(
+    Path(path): Path<SearchUserByUsername>,
     Extension(pool): Extension<MySqlPool>,
-    Extension(redisClient): Extension<RedisClient>,
+    Extension(redis_client): Extension<RedisClient>,
 ) -> Result<Json<User>, (StatusCode, String)> {
-    let mut redis_conn = redisClient.get_async_connection().await.unwrap();
+    let mut redis_conn = redis_client.get_async_connection().await.unwrap();
 
     let cache: RedisResult<String> = redis_conn.get(&path.username).await;
 
@@ -36,7 +33,7 @@ pub async fn find_user(
             match user_result {
                 Ok(user) => {
                     let json = serde_json::to_string(&user).unwrap();
-                    redis_conn.set_ex::<&str, String, usize>(&path.username, json, 5).await.unwrap();
+                    redis_conn.set_ex::<&str, String, ()>(&path.username, json, 5).await.unwrap();
                     Ok(Json(user))
                 }
                 Err(_) => Err((StatusCode::NOT_FOUND, "Not Found".to_string()))
@@ -45,16 +42,13 @@ pub async fn find_user(
     }
 }
 
-pub async fn create_user(
+pub async fn action_create_user(
     // this argument tells axum to parse the request body
     // as JSON into a `CreateUser` type
     Json(payload): Json<CreateUser>,
 ) -> (StatusCode, Json<User>) {
     // insert your application logic here
-    let user = User {
-        id: 1337,
-        username: payload.username,
-    };
+    let user = crate::schema::user::create(payload.username);
 
     // this will be converted into a JSON response
     // with a status code of `201 Created`
@@ -67,9 +61,3 @@ pub struct CreateUser {
     username: String,
 }
 
-// the output to our `create_user` handler
-#[derive(Serialize, Deserialize, sqlx::FromRow)]
-pub struct User {
-    id: u64,
-    username: String,
-}
