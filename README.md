@@ -29,11 +29,12 @@
     │  │  ├─auth        认证模型
     │  │  └─users       用户模型
     │  ├─routes         路由
-    │  ├─schemas        数据库表结构
+    │  ├─schema         数据库结构
     │  ├─services       中间服务 用于连接 controller 和 schema
     │  └─utils          其他工具类
     │      ├─i18n       国际化支持
     │      └─response   api响应内容封装
+    ├─mysql.sql         数据库sql
 
 
 ### crate 依赖

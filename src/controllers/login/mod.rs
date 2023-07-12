@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use crate::databases::get_db;
 use crate::models::{UserInfo, UserLogin, UserLoginSuccess};
-use crate::schemas::User;
+use crate::schema::User;
 use crate::utils::response::{error, success};
 
 pub async fn action_login(

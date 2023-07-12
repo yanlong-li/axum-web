@@ -7,7 +7,7 @@ use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod controllers;
-mod schemas;
+mod schema;
 mod services;
 mod models;
 mod routes;
