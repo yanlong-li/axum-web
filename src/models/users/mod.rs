@@ -11,3 +11,15 @@ pub struct UserLogin {
     pub username: String,
     pub password: String,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct UserInfo {
+    pub id: u64,
+    pub username: String,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct UserLoginSuccess {
+    pub user: UserInfo,
+    pub token: String,
+}

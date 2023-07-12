@@ -1,8 +1,9 @@
 use axum::Json;
 use axum::response::Response;
+use uuid::Uuid;
 
 use crate::databases::get_db;
-use crate::models::users::UserLogin;
+use crate::models::users::{UserInfo, UserLogin, UserLoginSuccess};
 use crate::schemas::user::User;
 use crate::utils::response::{error, success};
 
@@ -21,7 +22,15 @@ pub async fn action_login(
 
         match user_result {
             Ok(user) => {
-                success(user)
+                let token = Uuid::new_v4();
+
+                success(UserLoginSuccess {
+                    token: token.to_string(),
+                    user: UserInfo {
+                        id: user.id,
+                        username: user.username,
+                    },
+                })
             }
             Err(_) => error(1, "账号不存在")
         }
