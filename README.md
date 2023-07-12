@@ -1,5 +1,6 @@
 # Axum web framework tutorial
 
+本项目主要是学会“用”，而非“造”
 
 ## 包含内容
 * mysql
@@ -37,7 +38,7 @@
 
 ### crate 依赖
 
-目前主要是想实现 mysql、redis 等交互，所以依赖一下 crates
+目前主要是想实现 mysql、redis 等交互，所以依赖以下 crates
 
 * sqlx
 * redis
