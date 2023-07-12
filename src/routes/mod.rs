@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+
 use axum::Router;
 use tower_http::services::ServeDir;
 
@@ -6,9 +7,9 @@ mod users;
 mod ws;
 mod root;
 mod status;
+mod test;
 
 pub fn create_router() -> Router {
-
     let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets");
 
     Router::new()
@@ -17,4 +18,5 @@ pub fn create_router() -> Router {
         .merge(ws::create_routes())
         .merge(root::create_routes())
         .merge(status::create_routes())
+        .nest("/test", test::create_routes())
 }
