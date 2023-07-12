@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 use serde_json;
 use sqlx::mysql::MySqlPool;
 
-use crate::models::users::SearchUserByUsername;
-use crate::schemas::user::User;
+use crate::models::SearchUserByUsername;
+use crate::schemas::User;
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,

@@ -1,5 +1,5 @@
 use crate::databases;
-use crate::schemas::user::User;
+use crate::schemas::User;
 
 pub async fn create(username: String) -> Result<User, String> {
     let db = databases::get_db().await;
