@@ -7,7 +7,7 @@ use serde_json;
 use sqlx::mysql::MySqlPool;
 
 use crate::models::users::SearchUserByUsername;
-use crate::schema::user::User;
+use crate::schemas::user::User;
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,
@@ -68,5 +68,12 @@ pub async fn action_list(
         .fetch_all(&pool)
         .await.unwrap();
     Json(users_result)
+}
+
+pub async fn action_my_info() -> Json<User> {
+    Json(User {
+        id: 1,
+        username: "你好".to_string(),
+    })
 }
 

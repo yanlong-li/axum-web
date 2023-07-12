@@ -5,3 +5,9 @@ use serde::{Deserialize, Serialize};
 pub struct SearchUserByUsername {
     pub username: String,
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct UserLogin {
+    pub username: String,
+    pub password: String,
+}

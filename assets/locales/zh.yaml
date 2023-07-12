@@ -1,0 +1,4 @@
+app:
+  "Hello App!": "你好App！"
+error:
+  "Hello Error!": "你好Error！"

@@ -19,3 +19,5 @@ futures-util = { version = "0.3", default-features = false, features = ["sink", 
 sqlx = { version = "0.7.0",features=["mysql", "runtime-tokio-native-tls"] }
 redis = { version = "0.23.0",features=['tokio-comp'] }
 serde_json = { version = "1.0.100" }
+bytes = { version = "1.4.0",features = ["serde"] }
+mime = "0.3.17"

@@ -7,12 +7,12 @@ use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 mod controllers;
-mod schema;
+mod schemas;
 mod services;
 mod models;
 mod routes;
-
-mod database;
+mod middlewares;
+mod databases;
 
 mod utils;
 
@@ -29,7 +29,7 @@ async fn main() {
         .init();
 
     // 创建一个连接池
-    let pool = database::get_db().await;
+    let pool = databases::get_db().await;
 
     // 创建一个 Redis 客户端
     let client = Client::open("redis://127.0.0.1/").unwrap();

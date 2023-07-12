@@ -8,9 +8,10 @@ mod ws;
 mod root;
 mod status;
 mod test;
+mod login;
 
 pub fn create_router() -> Router {
-    let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets");
+    let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets/web");
 
     Router::new()
         .fallback_service(ServeDir::new(assets_dir).append_index_html_on_directories(true))
@@ -18,5 +19,6 @@ pub fn create_router() -> Router {
         .merge(ws::create_routes())
         .merge(root::create_routes())
         .merge(status::create_routes())
+        .merge(login::create_routes())
         .nest("/test", test::create_routes())
 }
