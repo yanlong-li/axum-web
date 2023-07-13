@@ -1,0 +1,57 @@
+### 用户名为空
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "",
+  "password": "里斯"
+}
+
+### 账号不存在
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "你好",
+  "password": "里斯"
+}
+
+### 登录成功
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "lisi",
+  "password": "里斯"
+}
+
+### 获取用户列表
+#@no-cookie-jar
+GET http://localhost:3000/users
+
+### 获取用户列表
+#@no-cookie-jar
+GET http://localhost:3000/users
+Cookie: auth=123
+
+
+### 此请求会让服务器下发cookie
+#@name 登录
+POST http://localhost:3000/login
+Content-Type: application/json
+
+{
+  "username": "zhangsan",
+  "password": ""
+}
+
+### 获取用户列表
+GET http://localhost:3000/users
+
+### 创建用户
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "username": "新用户2"
+}

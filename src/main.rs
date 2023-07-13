@@ -16,6 +16,8 @@ mod databases;
 
 mod utils;
 
+pub use utils::response::{Error,Result};
+
 
 #[tokio::main]
 async fn main() {

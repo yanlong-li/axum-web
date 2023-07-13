@@ -1,5 +1,6 @@
 use axum::Json;
 use axum::response::Response;
+use tower_cookies::{Cookie, Cookies};
 use uuid::Uuid;
 
 use crate::databases::get_db;
@@ -8,7 +9,8 @@ use crate::schema::User;
 use crate::utils::response::{error, success};
 
 pub async fn action_login(
-    Json(payload): Json<UserLogin>
+    cookies: Cookies,
+    Json(payload): Json<UserLogin>,
 ) -> Response {
     if payload.username.trim().is_empty() {
         error(1, "用户名不能为空")
@@ -23,6 +25,9 @@ pub async fn action_login(
         match user_result {
             Ok(user) => {
                 let token = Uuid::new_v4();
+
+
+                cookies.add(Cookie::new("auth", token.to_string()));
 
                 success(UserLoginSuccess {
                     token: token.to_string(),

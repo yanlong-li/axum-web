@@ -70,10 +70,3 @@ pub async fn action_list(
     Json(users_result)
 }
 
-pub async fn action_my_info() -> Json<User> {
-    Json(User {
-        id: 1,
-        username: "你好".to_string(),
-    })
-}
-

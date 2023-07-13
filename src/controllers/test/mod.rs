@@ -1,8 +1,9 @@
-use axum::headers::Cookie;
-use axum::TypedHeader;
+use tower_cookies::{Cookie, Cookies};
 
-pub async fn action_cookie(TypedHeader(cookie): TypedHeader<Cookie>) -> String {
-    cookie.get("language").unwrap_or_else(|| {
-        "None"
-    }).to_string()
+pub async fn action_cookie(cookies: Cookies) -> String {
+    let cookie = cookies.get("language").unwrap_or(Cookie::new("language", "zh-CN"));
+
+    cookies.add(Cookie::new("language", "zh-CN"));
+
+    cookie.value().to_string()
 }
