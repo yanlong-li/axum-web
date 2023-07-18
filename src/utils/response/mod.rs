@@ -1,14 +1,11 @@
 use axum::Json;
-use axum::response;
-use axum::response::IntoResponse;
+use axum::response::{self, IntoResponse};
 use serde::{Deserialize, Serialize};
 
-pub use error::Error;
-pub use error::Result;
+pub mod server;
+pub mod client;
 
-use crate::utils::response::error::client;
-
-mod error;
+pub type Result<T> = core::result::Result<T, server::ServerStatusCode>;
 
 #[derive(Serialize, Deserialize)]
 pub struct ResponseContent<T> {
@@ -28,7 +25,7 @@ pub fn success<T>(data: T) -> response::Response
     where
         T: Serialize,
 {
-    let client_status = client::StatusCode::OK;
+    let client_status = client::ClientStatusCode::OK;
 
     Json(ResponseContent {
         code: client_status.0,
@@ -37,7 +34,7 @@ pub fn success<T>(data: T) -> response::Response
     }).into_response()
 }
 
-pub fn error(status: client::StatusCode) -> response::Response
+pub fn error(status: client::ClientStatusCode) -> response::Response
 {
     Json(Response {
         code: status.0,

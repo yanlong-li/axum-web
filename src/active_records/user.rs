@@ -7,4 +7,12 @@ pub struct User {
     pub username: String,
 }
 
+// impl User {
+//     fn new(username: &str) -> Self {
+//         Self {
+//             id: 0,
+//             username: username.to_string(),
+//         }
+//     }
+// }
 

@@ -5,15 +5,18 @@ use uuid::Uuid;
 
 use crate::databases::get_db;
 use crate::models::{UserInfo, UserLogin, UserLoginSuccess};
-use crate::schema::User;
+use crate::active_records::User;
 use crate::utils::response::{error, success};
+use crate::utils::response::client::ClientStatusCode;
 
 pub async fn action_login(
     cookies: Cookies,
     Json(payload): Json<UserLogin>,
 ) -> Response {
     if payload.username.trim().is_empty() {
-        error(1, "用户名不能为空")
+        error(ClientStatusCode::USERNAME_CANNOT_BE_EMPTY)
+    } else if payload.username.trim().chars().all(char::is_alphabetic) {
+        error(ClientStatusCode::INCORRECT_USERNAME_FORMAT)
     } else {
         let conn = get_db().await;
 
@@ -25,8 +28,6 @@ pub async fn action_login(
         match user_result {
             Ok(user) => {
                 let token = Uuid::new_v4();
-
-
                 cookies.add(Cookie::new("auth", token.to_string()));
 
                 success(UserLoginSuccess {
@@ -37,13 +38,7 @@ pub async fn action_login(
                     },
                 })
             }
-            Err(_) => error(1, "账号不存在")
+            Err(_) => error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
         }
-        //
-        //
-        // success(User {
-        //     id: 1,
-        //     username: "2".to_string(),
-        // })
     }
 }
