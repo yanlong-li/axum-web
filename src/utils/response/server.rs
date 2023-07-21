@@ -24,7 +24,7 @@ impl IntoResponse for ServerStatusCode {
     fn into_response(self) -> Response {
         println!("--> {:<12} - {self:?}", "INTO_RES");
 
-        error(self.client_status_and_error()).into_response()
+        error(self.client_status_and_error())
     }
 }
 

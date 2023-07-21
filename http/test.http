@@ -55,3 +55,8 @@ Content-Type: application/json
 {
   "username": "新用户2"
 }
+
+### 测试Cookie
+#@no-cookie-jar
+GET http://localhost:3000/cookie/language
+Cookie: 

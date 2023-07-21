@@ -26,4 +26,5 @@ client_status_codes!(
     (3,USERNAME_CANNOT_BE_EMPTY,"User name cannot be empty");
     (4,INCORRECT_USERNAME_FORMAT,"Incorrect username format");
     (5,USERNAME_OR_PASSWORD_MISMATCH,"User name or password mismatch");
+    (6,NOT_FOUND_IP,"NOT_FOUND_IP");
 );

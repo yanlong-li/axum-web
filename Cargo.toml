@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6.18", features = ["default", "ws","headers"] }
+axum = { version = "0.6.19", features = ["default", "ws","headers"] }
 serde = { version = "1.0.166", features = ["derive"] }
 tokio = { version = "1.29.1", features = ["full"] }
 tracing = "0.1.37"
@@ -23,6 +23,8 @@ bytes = { version = "1.4.0",features = ["serde"] }
 mime = "0.3.17"
 tower-cookies = "0.9.0"
 lazy-regex = "3.0.0"
+maxminddb = { version = "0.23.0",features = ["mmap"] }
+axum-macros = "0.3.8"
 
 [dev-dependencies]
 anyhow = "1.0.17"

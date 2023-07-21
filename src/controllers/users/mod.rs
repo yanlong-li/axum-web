@@ -1,13 +1,15 @@
 use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
 use axum::http::StatusCode;
+use axum::response::Response;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
 use serde::{Deserialize, Serialize};
 use serde_json;
-use sqlx::mysql::MySqlPool;
+use sqlx::MySqlPool;
 
-use crate::models::SearchUserByUsername;
 use crate::active_records::User;
+use crate::models::SearchUserByUsername;
+use crate::utils::response::{client, error, success};
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,
@@ -42,17 +44,21 @@ pub async fn action_find_user(
     }
 }
 
+#[axum_macros::debug_handler]
 pub async fn action_create_user(
+    Extension(pool): Extension<MySqlPool>,
     Json(payload): Json<CreateUser>,
-) -> Result<Json<User>, String> {
+) -> Response {
     if payload.username.trim().is_empty() {
-        return Err("用户名不能为空".to_string());
+        return error(client::ClientStatusCode::USERNAME_CANNOT_BE_EMPTY);
     }
 
-    let user = crate::services::users::create(payload.username).await?;
+    let mut user = crate::services::users::create(payload.username);
+
+    let _ = user.execute(&pool);
 
     // Result::Err(StatusCode::CREATED,"sad".to_string())
-    Ok(Json(user))
+    success(Some(user))
 }
 
 // the input to our `create_user` handler
