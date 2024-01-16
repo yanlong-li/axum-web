@@ -28,7 +28,7 @@ pub fn create_router() -> Router {
 
 
 pub fn routes_static() -> Router {
-    let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("assets/web");
+    let assets_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../assets/web-server");
 
     Router::new().nest_service("/static", get_service(ServeDir::new(assets_dir).append_index_html_on_directories(true)))
 }

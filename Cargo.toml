@@ -1,31 +1,11 @@
-[package]
-name = "axum-web"
-version = "0.1.0"
-edition = "2021"
+[workspace]
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+members = [
+    "crates/services/web-server",
+    "crates/libs/lib-core",
+    "crates/libs/lib-auth",
+    "crates/libs/lib-rpc",
+    "crates/libs/lib-utils",
+]
 
-[dependencies]
-axum = { version = "0.6.19", features = ["default", "ws","headers"] }
-serde = { version = "1.0.166", features = ["derive"] }
-tokio = { version = "1.29.1", features = ["full"] }
-tracing = "0.1.37"
-tracing-subscriber = { version = "0.3.17",features=["env-filter"] }
-tower = { version = "0.4", features = ["util", "timeout"] }
-tower-http = { version = "0.4.0", features = ["add-extension", "trace","fs","tracing"] }
-uuid = { version = "1.0", features = ["serde", "v4"] }
-futures = "0.3"
-futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
-sqlx = { version = "0.7.0",features=["mysql", "runtime-tokio-native-tls"] }
-redis = { version = "0.23.0",features=['tokio-comp'] }
-serde_json = { version = "1.0.100" }
-bytes = { version = "1.4.0",features = ["serde"] }
-mime = "0.3.17"
-tower-cookies = "0.9.0"
-lazy-regex = "3.0.0"
-maxminddb = { version = "0.23.0",features = ["mmap"] }
-axum-macros = "0.3.8"
-
-[dev-dependencies]
-anyhow = "1.0.17"
-httpc-test = "0.1.4"
+default-members = ["crates/services/web-server"]
