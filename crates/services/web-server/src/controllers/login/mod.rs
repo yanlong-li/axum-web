@@ -1,8 +1,9 @@
 use axum::{Extension, Json};
 use axum::response::Response;
-use lib_core::model::store::DbPool;
 use tower_cookies::{Cookie, Cookies};
 use uuid::Uuid;
+
+use lib_core::model::store::DbPool;
 use lib_core::model::user::find_by_username;
 
 use crate::models::{UserInfo, UserLogin, UserLoginSuccess};
@@ -14,10 +15,8 @@ pub async fn action_login(
     Extension(pool): Extension<DbPool>,
     Json(payload): Json<UserLogin>,
 ) -> Response {
-    if payload.username.trim().is_empty() {
+    if payload.username.is_empty() {
         error(ClientStatusCode::USERNAME_CANNOT_BE_EMPTY)
-    } else if payload.username.trim().chars().all(char::is_alphabetic) {
-        error(ClientStatusCode::INCORRECT_USERNAME_FORMAT)
     } else {
         let user_result = find_by_username(&pool, &payload.username)
             .await;
@@ -35,7 +34,10 @@ pub async fn action_login(
                     },
                 }))
             }
-            Err(_) => error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
+            Err(err) => {
+                tracing::warn!("{}",err.to_string());
+                error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
+            }
         }
     }
 }

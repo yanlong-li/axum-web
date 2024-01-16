@@ -21,7 +21,7 @@ POST http://localhost:3000/login
 Content-Type: application/json
 
 {
-  "username": "lisi",
+  "username": "你好",
   "password": "里斯"
 }
 
@@ -53,7 +53,7 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "username": "你好"
+  "username": "test"
 }
 
 ### 测试Cookie

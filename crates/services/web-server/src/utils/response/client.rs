@@ -19,6 +19,7 @@ macro_rules! client_status_codes {
     }
 }
 
+
 client_status_codes!(
     (0,SERVER_ERROR,"Server Error");
     (1,OK,"Ok");

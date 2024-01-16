@@ -57,7 +57,8 @@ pub async fn action_create_user(
         Ok(user) => {
             success(Some(user))
         }
-        Err(_) => {
+        Err(err) => {
+            tracing::warn!("{}", format!("{}",err.to_string()));
             error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
         }
     }
