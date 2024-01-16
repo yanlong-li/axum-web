@@ -1,5 +1,4 @@
 [workspace]
-
 members = [
     "crates/services/web-server",
     "crates/libs/lib-core",
@@ -7,5 +6,5 @@ members = [
     "crates/libs/lib-rpc",
     "crates/libs/lib-utils",
 ]
-
+resolver = "2"
 default-members = ["crates/services/web-server"]

@@ -2,29 +2,36 @@
 name = "axum-web"
 version = "0.1.0"
 edition = "2021"
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6.19", features = ["default", "ws","headers"] }
+axum = { version = "0.7", features = ["default", "ws", "http2"] }
 serde = { version = "1.0.166", features = ["derive"] }
 tokio = { version = "1.29.1", features = ["full"] }
 tracing = "0.1.37"
-tracing-subscriber = { version = "0.3.17",features=["env-filter"] }
+tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 tower = { version = "0.4", features = ["util", "timeout"] }
-tower-http = { version = "0.4.0", features = ["add-extension", "trace","fs","tracing"] }
+tower-http = { version = "0.5", features = ["add-extension", "trace", "fs", "tracing"] }
 uuid = { version = "1.0", features = ["serde", "v4"] }
 futures = "0.3"
 futures-util = { version = "0.3", default-features = false, features = ["sink", "std"] }
-sqlx = { version = "0.7.0",features=["mysql", "runtime-tokio-native-tls"] }
-redis = { version = "0.23.0",features=['tokio-comp'] }
+sqlx = { version = "0.7.0", features = ["mysql", "runtime-tokio-native-tls"] }
+redis = { version = "0.24.0", features = ['tokio-comp'] }
 serde_json = { version = "1.0.100" }
-bytes = { version = "1.4.0",features = ["serde"] }
+bytes = { version = "1.4.0", features = ["serde"] }
 mime = "0.3.17"
-tower-cookies = "0.9.0"
+tower-cookies = "0.10.0"
 lazy-regex = "3.0.0"
-maxminddb = { version = "0.23.0",features = ["mmap"] }
-axum-macros = "0.3.8"
+maxminddb = { version = "0.24", features = ["mmap"] }
+axum-macros = "0.4.1"
+lib-core = { path = "../../libs/lib-core" }
+lib-auth = { path = "../../libs/lib-auth" }
+lib-utils = { path = "../../libs/lib-utils" }
+lib-rpc = { path = "../../libs/lib-rpc" }
+axum-extra = { version = "0.9.2", features = ["typed-header", "cookie", "form", "multipart", "protobuf", "query"] }
+dotenv = { version = "0.15.0", features = ["cli"] }
 
 [dev-dependencies]
 anyhow = "1.0.17"

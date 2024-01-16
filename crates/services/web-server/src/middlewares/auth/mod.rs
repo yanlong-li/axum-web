@@ -1,4 +1,4 @@
-use axum::http::Request;
+use axum::extract::Request;
 use axum::middleware::Next;
 use axum::response::Response;
 use tower_cookies::Cookies;
@@ -7,10 +7,10 @@ use crate::utils::response::Result;
 
 pub const AUTH_COOKIE_KEY: &str = "auth";
 
-pub async fn mw_require_auth<B>(
+pub async fn mw_require_auth(
     cookies: Cookies,
-    req: Request<B>,
-    next: Next<B>,
+    req: Request,
+    next: Next,
 ) -> Result<Response> {
     println!("--> {:<12} - mw_require_auth ", "MIDDLEWARE");
 

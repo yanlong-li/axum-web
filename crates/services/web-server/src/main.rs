@@ -1,3 +1,4 @@
+use std::env;
 use std::net::SocketAddr;
 
 use axum::Router;
@@ -28,11 +29,17 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
+    dotenv::dotenv().ok();
+    // 初始化环境
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URL 未定义");
+
     // 创建一个连接池
-    let pool = databases::get_db().await;
+    let pool = databases::get_db(&database_url).await;
+
+    let redis_url = env::var("REDIS_URL").expect("REDIS_URL 未定义");
 
     // 创建一个 Redis 客户端
-    let client = Client::open("redis://127.0.0.1/").unwrap();
+    let client = Client::open(redis_url).unwrap();
 
 
     // build our application with a route
@@ -46,10 +53,9 @@ async fn main() {
         ;
 
     // run it with hyper
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
-    tracing::info!("listening on http://{}", addr);
-    axum::Server::bind(&addr)
-        .serve(app.into_make_service_with_connect_info::<SocketAddr>())
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
+    // tracing::info!("listening on http://{}", listener);
+    axum::serve::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();
 }

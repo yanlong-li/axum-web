@@ -53,7 +53,7 @@ POST http://localhost:3000/users
 Content-Type: application/json
 
 {
-  "username": "新用户2"
+  "username": "你好"
 }
 
 ### 测试Cookie
