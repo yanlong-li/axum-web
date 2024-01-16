@@ -59,4 +59,7 @@ Content-Type: application/json
 ### 测试Cookie
 #@no-cookie-jar
 GET http://localhost:3000/cookie/language
-Cookie: 
+Cookie:
+
+###
+WEBSOCKET ws://localhost:3000/ws

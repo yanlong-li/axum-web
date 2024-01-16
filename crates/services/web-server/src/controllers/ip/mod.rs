@@ -3,7 +3,7 @@ use axum::response::Response;
 use maxminddb::{geoip2, MaxMindDBError};
 
 use crate::models::IpAddr;
-use crate::utils::ipdb::get_reader;
+use lib_utils::ip_library::get_reader;
 use crate::utils::response::{client, error, success};
 
 pub async fn action_ip_info(

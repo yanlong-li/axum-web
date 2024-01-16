@@ -90,7 +90,7 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
             }
             n_msg += 1;
 
-            tokio::time::sleep(std::time::Duration::from_millis(300)).await;
+            tokio::time::sleep(std::time::Duration::from_secs(1)).await;
         }
 
         println!("Sending close to {who}...");

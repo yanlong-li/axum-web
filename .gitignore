@@ -1,2 +1,8 @@
+# ide config
 .idea
+
+# build cache
 /target
+
+# env
+.env

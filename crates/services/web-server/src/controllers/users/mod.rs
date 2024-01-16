@@ -5,15 +5,17 @@ use axum::response::Response;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
 use serde::{Deserialize, Serialize};
 use serde_json;
-use sqlx::MySqlPool;
 
-use crate::active_records::User;
+use lib_core::model::store::DbPool;
+use lib_core::model::user::{create, find_by_username, find_all, User};
+
 use crate::models::SearchUserByUsername;
 use crate::utils::response::{client, error, success};
+use crate::utils::response::client::ClientStatusCode;
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,
-    Extension(pool): Extension<MySqlPool>,
+    Extension(pool): Extension<DbPool>,
     Extension(redis_client): Extension<RedisClient>,
 ) -> Result<Json<User>, (StatusCode, String)> {
     let mut redis_conn = redis_client.get_async_connection().await.unwrap();
@@ -26,11 +28,7 @@ pub async fn action_find_user(
             Ok(Json(user))
         }
         Err(_) => {
-            let user_result = sqlx::query_as::<_, User>("SELECT id,username FROM `user` WHERE username = ?")
-                .bind(&path.username)
-                .fetch_one(&pool)
-                .await;
-
+            let user_result = find_by_username(&pool, &path.username).await;
 
             match user_result {
                 Ok(user) => {
@@ -46,33 +44,35 @@ pub async fn action_find_user(
 
 #[axum_macros::debug_handler]
 pub async fn action_create_user(
-    Extension(pool): Extension<MySqlPool>,
+    Extension(pool): Extension<DbPool>,
     Json(payload): Json<CreateUser>,
 ) -> Response {
     if payload.username.trim().is_empty() {
         return error(client::ClientStatusCode::USERNAME_CANNOT_BE_EMPTY);
     }
 
-    let mut user = crate::services::users::create(payload.username);
+    let user = create(&pool, &payload.username).await;
 
-    let _ = user.execute(&pool);
-
-    // Result::Err(StatusCode::CREATED,"sad".to_string())
-    success(Some(user))
+    match user {
+        Ok(user) => {
+            success(Some(user))
+        }
+        Err(_) => {
+            error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
+        }
+    }
 }
 
 // the input to our `create_user` handler
-#[derive(Deserialize, Serialize, sqlx::FromRow)]
+#[derive(Deserialize, Serialize)]
 pub struct CreateUser {
     username: String,
 }
 
 pub async fn action_list(
-    Extension(pool): Extension<MySqlPool>,
+    Extension(pool): Extension<DbPool>,
 ) -> Json<Vec<User>> {
-    let users_result = sqlx::query_as::<_, User>("SELECT id,username FROM user")
-        .fetch_all(&pool)
-        .await.unwrap();
+    let users_result = find_all(&pool).await.unwrap();
     Json(users_result)
 }
 
