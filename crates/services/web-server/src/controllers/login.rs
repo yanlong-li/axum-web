@@ -7,8 +7,8 @@ use lib_core::model::store::DbPool;
 use lib_core::model::user::find_by_username;
 
 use crate::models::{UserInfo, UserLogin, UserLoginSuccess};
-use crate::utils::response::{error, success};
-use crate::utils::response::client::ClientStatusCode;
+use crate::utils::response::{error, success, success_without_data};
+use crate::utils::response::status_code::StatusCode;
 
 pub async fn action_login(
     cookies: Cookies,
@@ -16,7 +16,7 @@ pub async fn action_login(
     Json(payload): Json<UserLogin>,
 ) -> Response {
     if payload.username.is_empty() {
-        error(ClientStatusCode::USERNAME_CANNOT_BE_EMPTY)
+        error(StatusCode::USERNAME_CANNOT_BE_EMPTY)
     } else {
         let user_result = find_by_username(&pool, &payload.username)
             .await;
@@ -36,7 +36,7 @@ pub async fn action_login(
             }
             Err(err) => {
                 tracing::warn!("{}",err.to_string());
-                error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
+                error(StatusCode::USERNAME_OR_PASSWORD_MISMATCH)
             }
         }
     }

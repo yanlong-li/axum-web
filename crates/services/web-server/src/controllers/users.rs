@@ -1,6 +1,5 @@
 use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
-use axum::http::StatusCode;
 use axum::response::Response;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
 use serde::{Deserialize, Serialize};
@@ -10,14 +9,14 @@ use lib_core::model::store::DbPool;
 use lib_core::model::user::{create, find_by_username, find_all, User};
 
 use crate::models::SearchUserByUsername;
-use crate::utils::response::{client, error, success};
-use crate::utils::response::client::ClientStatusCode;
+use crate::utils::response::{error, success};
+use crate::utils::response::status_code::StatusCode;
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,
     Extension(pool): Extension<DbPool>,
     Extension(redis_client): Extension<RedisClient>,
-) -> Result<Json<User>, (StatusCode, String)> {
+) -> Result<Json<User>, (axum::http::StatusCode, String)> {
     let mut redis_conn = redis_client.get_async_connection().await.unwrap();
 
     let cache: RedisResult<String> = redis_conn.get(&path.username).await;
@@ -36,7 +35,7 @@ pub async fn action_find_user(
                     redis_conn.set_ex::<&str, String, ()>(&path.username, json, 5).await.unwrap();
                     Ok(Json(user))
                 }
-                Err(_) => Err((StatusCode::NOT_FOUND, "Not Found".to_string()))
+                Err(_) => Err((axum::http::StatusCode::NOT_FOUND, "Not Found".to_string()))
             }
         }
     }
@@ -48,7 +47,7 @@ pub async fn action_create_user(
     Json(payload): Json<CreateUser>,
 ) -> Response {
     if payload.username.trim().is_empty() {
-        return error(client::ClientStatusCode::USERNAME_CANNOT_BE_EMPTY);
+        return error(StatusCode::USERNAME_CANNOT_BE_EMPTY);
     }
 
     let user = create(&pool, &payload.username).await;
@@ -59,7 +58,7 @@ pub async fn action_create_user(
         }
         Err(err) => {
             tracing::warn!("{}", format!("{}",err.to_string()));
-            error(ClientStatusCode::USERNAME_OR_PASSWORD_MISMATCH)
+            error(StatusCode::USERNAME_OR_PASSWORD_MISMATCH)
         }
     }
 }

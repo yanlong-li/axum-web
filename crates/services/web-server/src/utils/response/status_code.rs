@@ -1,18 +1,27 @@
+use axum::response::{IntoResponse, Response};
+use crate::utils::response::error;
+
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub struct ClientStatusCode(pub u32, pub &'static str);
+pub struct StatusCode(pub u32, pub &'static str);
+
+impl IntoResponse for StatusCode {
+    fn into_response(self) -> Response {
+        error(self)
+    }
+}
 
 #[allow(unused_macros)]
-macro_rules! client_status_codes {
+macro_rules! status_codes {
     (
         $(
             $(#[$docs:meta])*
             ($num:expr, $konst:ident, $phrase:expr);
         )+
     ) => {
-        impl ClientStatusCode {
+        impl StatusCode {
         $(
             $(#[$docs])*
-            pub const $konst: ClientStatusCode = ClientStatusCode($num,$phrase);
+            pub const $konst: StatusCode = StatusCode($num,$phrase);
         )+
 
         }
@@ -20,7 +29,7 @@ macro_rules! client_status_codes {
 }
 
 
-client_status_codes!(
+status_codes!(
     (0,SERVER_ERROR,"Server Error");
     (1,OK,"Ok");
     (2,UNAUTHORIZED,"Unauthorized");
@@ -29,3 +38,4 @@ client_status_codes!(
     (5,USERNAME_OR_PASSWORD_MISMATCH,"User name or password mismatch");
     (6,NOT_FOUND_IP,"NOT_FOUND_IP");
 );
+

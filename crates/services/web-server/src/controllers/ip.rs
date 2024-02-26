@@ -4,7 +4,8 @@ use maxminddb::{geoip2, MaxMindDBError};
 
 use crate::models::IpAddr;
 use lib_utils::ip_library::get_reader;
-use crate::utils::response::{client, error, success};
+use crate::utils::response::{error, success};
+use crate::utils::response::status_code::StatusCode;
 
 pub async fn action_ip_info(
     Query(ip_addr): Query<IpAddr>
@@ -17,9 +18,9 @@ pub async fn action_ip_info(
             let info_result: Result<geoip2::City, MaxMindDBError> = reader.lookup(ip.parse().unwrap());
             match info_result {
                 Ok(data) => success(Some(data)),
-                Err(_) => error(client::ClientStatusCode::NOT_FOUND_IP)
+                Err(_) => error(StatusCode::NOT_FOUND_IP)
             }
         }
-        None => error(client::ClientStatusCode::NOT_FOUND_IP)
+        None => error(StatusCode::NOT_FOUND_IP)
     }
 }

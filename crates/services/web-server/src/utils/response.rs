@@ -1,11 +1,11 @@
 use axum::Json;
 use axum::response::{self, IntoResponse};
 use serde::{Deserialize, Serialize};
+use crate::utils::response::status_code::StatusCode;
 
-pub mod server;
-pub mod client;
+pub mod status_code;
 
-pub type Result<T> = core::result::Result<T, server::ServerStatusCode>;
+pub type Result<T> = core::result::Result<T, StatusCode>;
 
 #[derive(Serialize, Deserialize)]
 pub struct Response<T>
@@ -15,22 +15,25 @@ pub struct Response<T>
     pub data: Option<T>,
 }
 
-impl<T> Default for Response<T> {
+impl Default for Response<()> {
     fn default() -> Self {
         Response {
-            code: client::ClientStatusCode::OK.0,
-            msg: client::ClientStatusCode::OK.1,
-            data: None::<T>,
+            code: StatusCode::OK.0,
+            msg: StatusCode::OK.1,
+            data: None,
         }
     }
 }
 
+pub fn success_without_data() -> response::Response {
+    Json(Response::default()).into_response()
+}
 
 pub fn success<T>(data: Option<T>) -> response::Response
     where
         T: Serialize,
 {
-    let client_status = client::ClientStatusCode::OK;
+    let client_status = StatusCode::OK;
 
     Json(Response {
         code: client_status.0,
@@ -39,7 +42,7 @@ pub fn success<T>(data: Option<T>) -> response::Response
     }).into_response()
 }
 
-pub fn error(status: client::ClientStatusCode) -> response::Response
+pub fn error(status: StatusCode) -> response::Response
 {
     Json(Response {
         code: status.0,
