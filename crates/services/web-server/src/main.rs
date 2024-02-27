@@ -5,6 +5,7 @@ use axum_session::{SessionConfig, SessionLayer, SessionRedisPool, SessionRedisSe
 use redis::Client;
 use redis_pool::RedisPool;
 use tower_http::add_extension::AddExtensionLayer;
+use tower_http::compression::CompressionLayer;
 use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -53,6 +54,7 @@ async fn main() {
 
     // build our application with a route
     let app = routes::create_router()
+        .layer(CompressionLayer::new())
         .layer(AddExtensionLayer::new(mysql_pool))
         .layer(AddExtensionLayer::new(redis_client))
         .layer(SessionLayer::new(session_store))
