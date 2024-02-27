@@ -11,8 +11,6 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use lib_core::model::store as databases;
 
 mod controllers;
-mod services;
-mod models;
 mod routes;
 mod middlewares;
 

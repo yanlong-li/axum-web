@@ -8,9 +8,14 @@ use serde_json;
 use lib_core::model::store::DbPool;
 use lib_core::model::user::{create, find_by_username, find_all, User};
 
-use crate::models::SearchUserByUsername;
 use crate::utils::response::{error, success};
 use crate::utils::response::status_code::StatusCode;
+
+#[derive(Deserialize, Serialize)]
+pub struct SearchUserByUsername {
+    pub username: String,
+}
+
 
 pub async fn action_find_user(
     Path(path): Path<SearchUserByUsername>,
