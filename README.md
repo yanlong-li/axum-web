@@ -8,6 +8,16 @@
 参考： https://github.com/rust10x/rust-web-app
 
 
+
+目前包含：
+* MySQL
+* Redis
+* Session
+* Cookie
+* GeoIP2
+* reqwest
+
+
 start dev services
 ```shell
 docker compose -f docker-compose.yaml up -d

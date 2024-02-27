@@ -3,7 +3,7 @@ use sqlx::Error;
 
 use crate::model::store::DbPool;
 
-#[derive(Deserialize, Serialize, sqlx::FromRow)]
+#[derive(Deserialize, Serialize, sqlx::FromRow, Clone)]
 pub struct User {
     pub id: u64,
     pub username: String,

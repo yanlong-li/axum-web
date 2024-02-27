@@ -40,10 +40,11 @@ async fn main() {
     tracing::debug!("Redis connection to address {}", &redis_url);
     let redis_client = Client::open(redis_url).unwrap();
 
+    let session_name = env::var("SESSION_NAME").unwrap_or("session".to_string());
 
     let redis_pool = RedisPool::from(redis_client.clone());
     let session_config = SessionConfig::default()
-        .with_session_name("session");
+        .with_session_name(session_name);
 
     let session_redis_pool = SessionRedisPool::from(redis_pool);
 

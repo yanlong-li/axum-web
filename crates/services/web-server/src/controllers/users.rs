@@ -1,6 +1,7 @@
 use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
 use axum::response::Response;
+use axum_session::{Session, SessionRedisPool};
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -8,12 +9,25 @@ use serde_json;
 use lib_core::model::store::DbPool;
 use lib_core::model::user::{create, find_by_username, find_all, User};
 
-use crate::utils::response::{error, success};
+use crate::utils::response::{error, success, success_without_data};
 use crate::utils::response::status_code::StatusCode;
 
 #[derive(Deserialize, Serialize)]
 pub struct SearchUserByUsername {
     pub username: String,
+}
+
+
+pub async fn action_current_user(
+    Extension(user_info): Extension<User>
+) -> Result<Json<User>, (axum::http::StatusCode, String)> {
+    Ok(Json(user_info))
+}
+
+pub async fn action_logout(session: Session<SessionRedisPool>) -> Response {
+    session.destroy();
+
+    return success_without_data();
 }
 
 

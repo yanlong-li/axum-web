@@ -11,7 +11,7 @@ use futures_util::{SinkExt, StreamExt};
 /// The handler for the HTTP request (this gets called when the HTTP GET lands at the start
 /// of websocket negotiation). After this completes, the actual switching from HTTP to
 /// websocket protocol will occur.
-/// This is the last point where we can extract TCP/IP metadata such as IP address of the client
+/// This is the last point where we can extract TCP/IP metadata such as IP address of the CLIENT
 /// as well as things from HTTP headers such as user-agent of the browser etc.
 pub async fn ws_handler(
     ws: WebSocketUpgrade,
@@ -41,9 +41,9 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
         return;
     }
 
-    // receive single message from a client (we can either receive or send with socket).
-    // this will likely be the Pong for our Ping or a hello message from client.
-    // waiting for message from a client will block this task, but will not block other client's
+    // receive single message from a CLIENT (we can either receive or send with socket).
+    // this will likely be the Pong for our Ping or a hello message from CLIENT.
+    // waiting for message from a CLIENT will block this task, but will not block other CLIENT's
     // connections.
     if let Some(msg) = socket.recv().await {
         if let Ok(msg) = msg {
@@ -51,14 +51,14 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
                 return;
             }
         } else {
-            println!("client {who} abruptly disconnected");
+            println!("CLIENT {who} abruptly disconnected");
             return;
         }
     }
 
-    // Since each client gets individual statemachine, we can pause handling
+    // Since each CLIENT gets individual statemachine, we can pause handling
     // when necessary to wait for some external event (in this case illustrated by sleeping).
-    // Waiting for this client to finish getting its greetings does not prevent other clients from
+    // Waiting for this CLIENT to finish getting its greetings does not prevent other clients from
     // connecting to server and receiving their greetings.
     for i in 1..5 {
         if socket
@@ -66,17 +66,17 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
             .await
             .is_err()
         {
-            println!("client {who} abruptly disconnected");
+            println!("CLIENT {who} abruptly disconnected");
             return;
         }
         tokio::time::sleep(std::time::Duration::from_millis(100)).await;
     }
 
     // By splitting socket we can send and receive at the same time. In this example we will send
-    // unsolicited messages to client based on some sort of server's internal event (i.e .timer).
+    // unsolicited messages to CLIENT based on some sort of server's internal event (i.e .timer).
     let (mut sender, mut receiver) = socket.split();
 
-    // Spawn a task that will push several messages to the client (does not matter what client does)
+    // Spawn a task that will push several messages to the CLIENT (does not matter what CLIENT does)
     let mut send_task = tokio::spawn(async move {
         let mut n_msg = 0;
         loop {
@@ -106,7 +106,7 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
         n_msg
     });
 
-    // This second task will receive messages from client and print them on server console
+    // This second task will receive messages from CLIENT and print them on server console
     let mut recv_task = tokio::spawn(async move {
         let mut cnt = 0;
         while let Some(Ok(msg)) = receiver.next().await {
@@ -121,14 +121,14 @@ async fn handle_socket(mut socket: WebSocket, who: SocketAddr) {
 
     // If any one of the tasks exit, abort the other.
     tokio::select! {
-        rv_a = (&mut send_task) => {
+        rv_a = &mut send_task => {
             match rv_a {
                 Ok(a) => println!("{} messages sent to {}", a, who),
                 Err(a) => println!("Error sending messages {:?}", a)
             }
             recv_task.abort();
         },
-        rv_b = (&mut recv_task) => {
+        rv_b = &mut recv_task => {
             match rv_b {
                 Ok(b) => println!("Received {} messages", b),
                 Err(b) => println!("Error receiving messages {:?}", b)

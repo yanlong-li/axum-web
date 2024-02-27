@@ -46,6 +46,6 @@ pub fn error(status: StatusCode) -> response::Response
     Json(Response {
         code: status.0,
         msg: status.1,
-        data: None::<String>,
+        data: None::<()>,
     }).into_response()
 }

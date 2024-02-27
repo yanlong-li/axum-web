@@ -12,6 +12,7 @@ mod status;
 mod test;
 mod login;
 mod ip;
+mod http;
 
 pub fn create_router() -> Router {
     Router::new()
@@ -21,6 +22,7 @@ pub fn create_router() -> Router {
         .merge(status::create_routes())
         .merge(login::create_routes())
         .merge(ip::create_routes())
+        .merge(http::create_routes())
         .nest("/cookie", test::create_routes())
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static())

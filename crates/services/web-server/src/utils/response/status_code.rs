@@ -29,7 +29,7 @@ macro_rules! status_codes {
     }
 }
 status_codes!(
-    (0,SERVER_ERROR,"Server Error");
+    (0,INTERNAL_SERVER_ERROR,"Server Error");
     (1,OK,"Ok");
     (2,UNAUTHORIZED,"Unauthorized");
     (3,USERNAME_CANNOT_BE_EMPTY,"User name cannot be empty");

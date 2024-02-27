@@ -34,6 +34,8 @@ lib-rpc = { path = "../../libs/lib-rpc" }
 axum-extra = { version = "0.9.2", features = ["typed-header", "cookie", "form", "multipart", "protobuf", "query"] }
 dotenv = { version = "0.15.0", features = ["cli"] }
 axum_session = { version = "0.12.4", features = ["redis-db"] }
+reqwest = "0.11.24"
+lazy_static = "1.4.0"
 
 [dev-dependencies]
 anyhow = "1.0.17"

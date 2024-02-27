@@ -1,15 +1,24 @@
+use axum::Extension;
 use axum::extract::Request;
 use axum::middleware::Next;
 use axum::response::Response;
 use axum_session::{ReadOnlySession, SessionRedisPool};
+use serde::{Deserialize, Serialize};
+use lib_core::model::store::DbPool;
 
 use crate::utils::response::Result;
 use crate::utils::response::status_code::StatusCode;
 
+#[derive(Debug, Clone, Deserialize, Serialize)]
+pub struct UserInfo {
+    pub id: u64,
+    pub username: String,
+}
 
 pub async fn mw_require_auth(
     session: ReadOnlySession<SessionRedisPool>,
-    req: Request,
+    Extension(pool): Extension<DbPool>,
+    mut req: Request,
     next: Next,
 ) -> Result<Response> {
     tracing::debug!("--> MIDDLEWARE - mw_require_auth");
@@ -23,6 +32,17 @@ pub async fn mw_require_auth(
         }
         Some(user_id) => {
             tracing::info!("--> MIDDLEWARE - user_id: {}", user_id);
+
+            let user = lib_core::model::user::find_one(&pool, &user_id).await;
+
+            match user {
+                Ok(user) => {
+                    req.extensions_mut().insert(user);
+                }
+                Err(_) => {
+                    return Err(StatusCode::INTERNAL_SERVER_ERROR);
+                }
+            };
         }
     }
 

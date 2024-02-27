@@ -29,10 +29,10 @@ Content-Type: application/json
 #@no-cookie-jar
 GET http://localhost:3000/users
 
-### 获取用户列表
+### 获取用户列表-不带cookie
 #@no-cookie-jar
 GET http://localhost:3000/users
-Cookie: auth=123
+Cookie: session=123
 
 
 ### 此请求会让服务器下发cookie
@@ -45,7 +45,7 @@ Content-Type: application/json
   "password": ""
 }
 
-### 获取用户列表
+### 获取用户列表 - 成功
 GET http://localhost:3000/users
 
 ### 创建用户
@@ -63,3 +63,12 @@ Cookie:
 
 ###
 WEBSOCKET ws://localhost:3000/ws
+
+### 获取当前登录用户信息
+GET http://localhost:3000/users/self
+
+### 退出登录
+GET http://localhost:3000/users/logout
+
+### http-test
+GET http://localhost:3000/http/get
