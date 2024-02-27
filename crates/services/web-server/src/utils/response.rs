@@ -25,6 +25,7 @@ impl Default for Response<()> {
     }
 }
 
+#[allow(unused)]
 pub fn success_without_data() -> response::Response {
     Json(Response::default()).into_response()
 }
@@ -33,11 +34,9 @@ pub fn success<T>(data: Option<T>) -> response::Response
     where
         T: Serialize,
 {
-    let client_status = StatusCode::OK;
-
     Json(Response {
-        code: client_status.0,
-        msg: client_status.1,
+        code: StatusCode::OK.0,
+        msg: StatusCode::OK.1,
         data,
     }).into_response()
 }

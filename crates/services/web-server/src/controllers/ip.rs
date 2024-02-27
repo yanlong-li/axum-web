@@ -18,9 +18,9 @@ pub async fn action_ip_info(
             let info_result: Result<geoip2::City, MaxMindDBError> = reader.lookup(ip.parse().unwrap());
             match info_result {
                 Ok(data) => success(Some(data)),
-                Err(_) => error(StatusCode::NOT_FOUND_IP)
+                Err(_) => error(StatusCode::NOT_FOUND)
             }
         }
-        None => error(StatusCode::NOT_FOUND_IP)
+        None => error(StatusCode::NOT_FOUND)
     }
 }

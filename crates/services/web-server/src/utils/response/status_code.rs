@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use axum::response::{IntoResponse, Response};
 use crate::utils::response::error;
 
@@ -27,8 +28,6 @@ macro_rules! status_codes {
         }
     }
 }
-
-
 status_codes!(
     (0,SERVER_ERROR,"Server Error");
     (1,OK,"Ok");
@@ -36,6 +35,6 @@ status_codes!(
     (3,USERNAME_CANNOT_BE_EMPTY,"User name cannot be empty");
     (4,INCORRECT_USERNAME_FORMAT,"Incorrect username format");
     (5,USERNAME_OR_PASSWORD_MISMATCH,"User name or password mismatch");
-    (6,NOT_FOUND_IP,"NOT_FOUND_IP");
+    (6,NOT_FOUND,"Not found");
 );
 

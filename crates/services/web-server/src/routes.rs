@@ -2,11 +2,8 @@ use std::path::PathBuf;
 
 use axum::Router;
 use axum::routing::get_service;
-use redis::Client;
 use tower_cookies::CookieManagerLayer;
-use tower_http::add_extension::AddExtensionLayer;
 use tower_http::services::ServeDir;
-use lib_core::model::store::DbPool;
 
 mod users;
 mod ws;
@@ -16,7 +13,7 @@ mod test;
 mod login;
 mod ip;
 
-pub fn create_router(pool: DbPool, client: Client) -> Router {
+pub fn create_router() -> Router {
     Router::new()
         .merge(users::create_routes())
         .merge(ws::create_routes())
@@ -27,8 +24,6 @@ pub fn create_router(pool: DbPool, client: Client) -> Router {
         .nest("/cookie", test::create_routes())
         .layer(CookieManagerLayer::new())
         .fallback_service(routes_static())
-        .layer(AddExtensionLayer::new(pool))
-        .layer(AddExtensionLayer::new(client))
 }
 
 

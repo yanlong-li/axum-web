@@ -1,28 +1,29 @@
 use axum::extract::Request;
 use axum::middleware::Next;
 use axum::response::Response;
-use tower_cookies::Cookies;
+use axum_session::{ReadOnlySession, SessionRedisPool};
 
 use crate::utils::response::Result;
 use crate::utils::response::status_code::StatusCode;
 
-pub const AUTH_COOKIE_KEY: &str = "auth";
 
 pub async fn mw_require_auth(
-    cookies: Cookies,
+    session: ReadOnlySession<SessionRedisPool>,
     req: Request,
     next: Next,
 ) -> Result<Response> {
-    println!("--> MIDDLEWARE - mw_require_auth");
-    println!("--> MIDDLEWARE - cookies: {:?}", cookies);
-    // 检查是否存在名为 "auth" 的 cookie
-    // 如果存在，则继续处理请求，如果不存在，则返回 401 Unauthorized
-    // 如果需要，这里还可以进行一些权限验证等操作
+    tracing::debug!("--> MIDDLEWARE - mw_require_auth");
 
-    let result = cookies.get(AUTH_COOKIE_KEY).map(|c| c.value().to_string());
+    // 需要获取 session 并判断数据
+    let user_result = session.get::<u64>("user_id");
 
-    if result.is_none() {
-        return Err(StatusCode::UNAUTHORIZED);
+    match user_result {
+        None => {
+            return Err(StatusCode::UNAUTHORIZED);
+        }
+        Some(user_id) => {
+            tracing::info!("--> MIDDLEWARE - user_id: {}", user_id);
+        }
     }
 
     Ok(next.run(req).await)

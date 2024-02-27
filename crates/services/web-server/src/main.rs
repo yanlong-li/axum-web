@@ -1,7 +1,10 @@
 use std::env;
 use std::net::SocketAddr;
 
+use axum_session::{SessionConfig, SessionLayer, SessionRedisPool, SessionRedisSessionStore};
 use redis::Client;
+use redis_pool::RedisPool;
+use tower_http::add_extension::AddExtensionLayer;
 use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -31,17 +34,29 @@ async fn main() {
     dotenv::dotenv().ok();
     // 创建数据库连接池
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL 未定义");
-    let pool = databases::get_db(&database_url).await;
+    let mysql_pool = databases::get_db(&database_url).await;
     tracing::debug!("MySQL connection to address {}", database_url);
 
     // 创建 Redis 客户端
     let redis_url = env::var("REDIS_URL").expect("REDIS_URL 未定义");
     tracing::debug!("Redis connection to address {}", &redis_url);
-    let client = Client::open(redis_url).unwrap();
+    let redis_client = Client::open(redis_url).unwrap();
+
+
+    let redis_pool = RedisPool::from(redis_client.clone());
+    let session_config = SessionConfig::default()
+        .with_session_name("session");
+
+    let session_redis_pool = SessionRedisPool::from(redis_pool);
+
+    let session_store = SessionRedisSessionStore::new(Some(session_redis_pool), session_config).await.unwrap();
 
 
     // build our application with a route
-    let app = routes::create_router(pool, client)
+    let app = routes::create_router()
+        .layer(AddExtensionLayer::new(mysql_pool))
+        .layer(AddExtensionLayer::new(redis_client))
+        .layer(SessionLayer::new(session_store))
         .layer(
             TraceLayer::new_for_http()
                 .make_span_with(DefaultMakeSpan::default().include_headers(true)),
