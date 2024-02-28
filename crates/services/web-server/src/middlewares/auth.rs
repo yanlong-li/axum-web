@@ -15,6 +15,7 @@ pub struct UserInfo {
     pub username: String,
 }
 
+// 这里一定要注意，req、next 要在最后
 pub async fn mw_require_auth(
     session: ReadOnlySession<SessionRedisPool>,
     Extension(pool): Extension<DbPool>,

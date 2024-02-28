@@ -3,10 +3,7 @@
 本项目主要是学会“用”，而非“造”
 
 
-中间修改过目录结构，但是没有推送到github，换了电脑后都丢失了。
-
-参考： https://github.com/rust10x/rust-web-app
-
+目录结构参考： https://github.com/rust10x/rust-web-app
 
 
 目前包含：
@@ -14,8 +11,12 @@
 * Redis
 * Session
 * Cookie
+* WebSocket
 * GeoIP2
 * reqwest
+
+
+业务逻辑包含用户登录、用户登录状态判断（Session）、IP信息查询、网络请求（模拟请求第三方api接口）、WebSocket连接
 
 
 start dev services
