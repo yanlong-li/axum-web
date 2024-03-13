@@ -15,6 +15,15 @@ pub struct Response<T>
     pub data: Option<T>,
 }
 
+pub fn from_status_code(status: StatusCode) -> response::Response
+{
+    Json(Response {
+        code: status.0,
+        msg: status.1,
+        data: None::<()>,
+    }).into_response()
+}
+
 impl Default for Response<()> {
     fn default() -> Self {
         Response {
@@ -43,9 +52,5 @@ pub fn success<T>(data: Option<T>) -> response::Response
 
 pub fn error(status: StatusCode) -> response::Response
 {
-    Json(Response {
-        code: status.0,
-        msg: status.1,
-        data: None::<()>,
-    }).into_response()
+    from_status_code(status)
 }

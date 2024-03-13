@@ -1,13 +1,13 @@
 #![allow(dead_code)]
 use axum::response::{IntoResponse, Response};
-use crate::utils::response::error;
+use crate::utils::response::from_status_code;
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 pub struct StatusCode(pub u32, pub &'static str);
 
 impl IntoResponse for StatusCode {
     fn into_response(self) -> Response {
-        error(self)
+        from_status_code(self)
     }
 }
 
