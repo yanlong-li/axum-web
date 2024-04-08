@@ -2,6 +2,7 @@ use std::env;
 use std::net::SocketAddr;
 
 use axum_session::{SessionConfig, SessionLayer, SessionRedisPool, SessionRedisSessionStore};
+use listenfd::ListenFd;
 use redis::Client;
 use redis_pool::RedisPool;
 use tower_http::add_extension::AddExtensionLayer;
@@ -63,11 +64,22 @@ async fn main() {
                 .make_span_with(DefaultMakeSpan::default().include_headers(true)),
         );
 
-    let server = env::var("WEB_SERVICE_ADDRESS").expect("WEB_SERVICE_ADDRESS 未定义");
+    let mut listenfd = ListenFd::from_env();
+    // if listenfd doesn't take a TcpListener (i.e. we're not running via
+    // the command above), we fall back to explicitly binding to a given
+    // host:port.
+    let server = if let Some(l) = listenfd.take_tcp_listener(0).unwrap() {
+        // Server::from_tcp(l).unwrap()
+        tokio::net::TcpListener::from_std(l)
+    } else {
+        // Server::bind(&([127, 0, 0, 1], 3030).into())
+        let service_addr = env::var("WEB_SERVICE_ADDRESS").expect("WEB_SERVICE_ADDRESS 未定义1");
+        tokio::net::TcpListener::bind(&service_addr).await
+    };
 
     // run it with hyper
-    let listener = tokio::net::TcpListener::bind(&server).await.unwrap();
-    tracing::info!("Web service listening on http://{}", server);
+    let listener = server.unwrap();
+    tracing::info!("Web service listening on http://{}", listener.local_addr().unwrap());
     axum::serve::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
         .await
         .unwrap();

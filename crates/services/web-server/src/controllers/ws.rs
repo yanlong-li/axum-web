@@ -2,7 +2,6 @@ use std::borrow::Cow;
 use std::net::SocketAddr;
 use std::ops::ControlFlow;
 use axum::extract::{ConnectInfo, WebSocketUpgrade};
-// use axum::{headers, TypedHeader};
 use axum_extra::{headers, typed_header::TypedHeader};
 use axum::extract::ws::{CloseFrame, Message, WebSocket};
 use axum::response::IntoResponse;

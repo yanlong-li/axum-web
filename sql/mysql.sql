@@ -6,3 +6,6 @@ CREATE TABLE if not exists `user`
     `username` varchar(32)     NOT NULL,
     PRIMARY KEY (`id`)
 );
+
+insert into `user`(username)
+values ('test');

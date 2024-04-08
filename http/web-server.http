@@ -1,5 +1,5 @@
 ### 用户名为空
-POST http://localhost:3000/login
+POST http://{{api}}/login
 Content-Type: application/json
 
 {
@@ -8,36 +8,36 @@ Content-Type: application/json
 }
 
 ### 账号不存在
-POST http://localhost:3000/login
+POST http://{{api}}/login
 Content-Type: application/json
 
 {
-  "username": "你好",
+  "username": "test-2",
   "password": "里斯"
 }
 
 ### 登录成功
-POST http://localhost:3000/login
+POST http://{{api}}/login
 Content-Type: application/json
 
 {
-  "username": "你好",
+  "username": "test",
   "password": "里斯"
 }
 
 ### 获取用户列表失败-不带cookie
 #@no-cookie-jar
-GET http://localhost:3000/users
+GET http://{{api}}/users
 
 ### 获取用户列表-不带cookie
 #@no-cookie-jar
-GET http://localhost:3000/users
+GET http://{{api}}/users
 Cookie: session=123
 
 
 ### 此请求会让服务器下发cookie
 #@name 登录
-POST http://localhost:3000/login
+POST http://{{api}}/login
 Content-Type: application/json
 
 {
@@ -46,29 +46,29 @@ Content-Type: application/json
 }
 
 ### 获取用户列表 - 成功
-GET http://localhost:3000/users
+GET http://{{api}}/users
 
 ### 创建用户
-POST http://localhost:3000/users
+POST http://localhost:7000/users
 Content-Type: application/json
 
 {
-  "username": "test"
+  "username": "test2"
 }
 
 ### 测试Cookie
 #@no-cookie-jar
-GET http://localhost:3000/cookie/language
+GET http://{{api}}/cookie/language
 Cookie:
 
 ###
-WEBSOCKET ws://localhost:3000/ws
+WEBSOCKET ws://{{api}}/ws
 
 ### 获取当前登录用户信息
-GET http://localhost:3000/users/self
+GET http://{{api}}/users/self
 
 ### 退出登录
-GET http://localhost:3000/users/logout
+GET http://{{api}}/users/logout
 
 ### http-test
-GET http://localhost:3000/http/get
+GET http://{{api}}/http/get

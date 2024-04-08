@@ -16,9 +16,9 @@ mod http;
 
 pub fn create_router() -> Router {
     Router::new()
+        .merge(root::create_routes())
         .merge(users::create_routes())
         .merge(ws::create_routes())
-        .merge(root::create_routes())
         .merge(status::create_routes())
         .merge(login::create_routes())
         .merge(ip::create_routes())
