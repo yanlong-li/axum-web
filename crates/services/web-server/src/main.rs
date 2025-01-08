@@ -1,11 +1,12 @@
+use redis::{Client};
+use axum::Extension;
 use std::env;
 use std::net::SocketAddr;
-use axum::Extension;
 
-use axum_session::{SessionConfig, SessionLayer, SessionRedisPool, SessionRedisSessionStore};
+use axum_session::{SessionConfig, SessionLayer, SessionStore};
+use axum_session_redispool::SessionRedisPool;
 use listenfd::ListenFd;
-use redis::Client;
-use redis_pool::RedisPool;
+use redis_pool::{RedisPool, SingleRedisPool};
 use tower_http::compression::CompressionLayer;
 use tower_http::trace::{DefaultMakeSpan, TraceLayer};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -13,11 +14,10 @@ use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 use lib_core::model::store as databases;
 
 mod controllers;
-mod routes;
 mod middlewares;
+mod routes;
 
 mod utils;
-
 
 #[tokio::main]
 async fn main() {
@@ -44,14 +44,13 @@ async fn main() {
 
     let session_name = env::var("SESSION_NAME").unwrap_or("session".to_string());
 
-    let redis_pool = RedisPool::from(redis_client.clone());
+    let redis_pool: SingleRedisPool = RedisPool::from(redis_client.clone());
     let session_config = SessionConfig::default()
         .with_session_name(session_name);
 
     let session_redis_pool = SessionRedisPool::from(redis_pool);
 
-    let session_store = SessionRedisSessionStore::new(Some(session_redis_pool), session_config).await.unwrap();
-
+    let session_store = SessionStore::<SessionRedisPool>::new(Some(session_redis_pool), session_config).await.unwrap();
 
     // build our application with a route
     let app = routes::create_router()
@@ -79,11 +78,14 @@ async fn main() {
 
     // run it with hyper
     let listener = server.unwrap();
-    tracing::info!("Web service listening on http://{}", listener.local_addr().unwrap());
-    axum::serve::serve(listener, app.into_make_service_with_connect_info::<SocketAddr>())
-        .await
-        .unwrap();
+    tracing::info!(
+        "Web service listening on http://{}",
+        listener.local_addr().unwrap()
+    );
+    axum::serve::serve(
+        listener,
+        app.into_make_service_with_connect_info::<SocketAddr>(),
+    )
+    .await
+    .unwrap();
 }
-
-
-

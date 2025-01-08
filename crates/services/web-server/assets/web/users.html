@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>用户列表</title>
+    <title>user list</title>
 </head>
 <body>
 <div id="app">
@@ -26,9 +26,9 @@
     <br>
     <br>
     <br>
-    <h3>创建新用户</h3>
-    <input id="username" name="username" placeholder="请输入用户名">
-    <input type="submit" value="提交" onclick="function createUser() {
+    <h3>create new user</h3>
+    <input id="username" name="username" placeholder="please enter username" type="text">
+    <input type="submit" value="submit" onclick="function createUser() {
         let username = document.getElementById('username').value;
 
         fetch('/users',{
@@ -53,6 +53,11 @@
         fetch('/users', {
             method: 'get',
         }).then(res => res.json()).then(res => {
+
+            if (res.code === 2) {
+                alert("unauthorized");
+                location = "login.html";
+            }
 
             res.forEach(item => {
 

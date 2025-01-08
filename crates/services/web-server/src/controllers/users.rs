@@ -1,7 +1,8 @@
 use axum::{Extension, Json, response::Result};
 use axum::extract::Path;
 use axum::response::Response;
-use axum_session::{Session, SessionRedisPool};
+use axum_session::{Session};
+use axum_session_redispool::SessionRedisPool;
 use redis::{AsyncCommands, Client as RedisClient, RedisResult};
 use serde::{Deserialize, Serialize};
 use serde_json;
@@ -36,7 +37,7 @@ pub async fn action_find_user(
     Extension(pool): Extension<DbPool>,
     Extension(redis_client): Extension<RedisClient>,
 ) -> Result<Json<User>, (axum::http::StatusCode, String)> {
-    let mut redis_conn = redis_client.get_async_connection().await.unwrap();
+    let mut redis_conn = redis_client.get_multiplexed_async_connection().await.unwrap();
 
     let cache: RedisResult<String> = redis_conn.get(&path.username).await;
 

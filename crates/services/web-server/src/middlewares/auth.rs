@@ -2,7 +2,8 @@ use axum::Extension;
 use axum::extract::Request;
 use axum::middleware::Next;
 use axum::response::Response;
-use axum_session::{ReadOnlySession, SessionRedisPool};
+use axum_session::{ReadOnlySession};
+use axum_session_redispool::SessionRedisPool;
 use serde::{Deserialize, Serialize};
 use lib_core::model::store::DbPool;
 

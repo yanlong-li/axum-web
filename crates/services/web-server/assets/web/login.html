@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+<form method="POST" id="form" onsubmit="login(event)">
+    <input type="text" name="username" placeholder="Username" value="test">
+    <input type="password" name="password" placeholder="Password">
+    <input type="submit" value="Login">
+</form>
+
+<script>
+    function login(event) {
+        event.preventDefault();
+        var form = document.getElementById('form');
+        var username = form.username.value;
+        var password = form.password.value;
+
+        fetch('http://127.0.0.1:3000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            }),
+        }).then(function (response) {
+            return response.json();
+        }).then(function (response) {
+            console.log(response);
+
+            if (response.code === 1) {
+                location = 'users.html';
+            } else {
+                alert(response.msg);
+            }
+        })
+
+    }
+</script>
+</body>
+</html>

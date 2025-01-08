@@ -1,14 +1,15 @@
-use axum::{Extension, Json};
 use axum::response::Response;
-use axum_session::{Session, SessionRedisPool};
+use axum::{Extension, Json};
+use axum_session::{Session};
+use axum_session_redispool::SessionRedisPool;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use lib_core::model::store::DbPool;
 use lib_core::model::user::find_by_username;
 
-use crate::utils::response::{error, success};
 use crate::utils::response::status_code::StatusCode;
+use crate::utils::response::{error, success};
 
 #[derive(Deserialize, Serialize)]
 pub struct UserLogin {
